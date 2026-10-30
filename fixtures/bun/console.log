@@ -1,0 +1,28 @@
+bun test v1.3.13 (abc12345)
+
+tests/m.test.ts:
+5 |   test("adds", () => expect(1 + 1).toBe(2));
+6 |   test("fails", () => {
+7 |     expect(1 + 2).toBe(4);
+                      ^
+error: expect(received).toBe(expected)
+
+Expected: 4
+Received: 3
+
+      at <anonymous> (/home/runner/work/diene.bun-lib/diene.bun-lib/tests/m.test.ts:7:22)
+(fail) math > fails
+(pass) math > adds
+(skip) math > skipped
+ 8 |   test("throws", () => {
+ 9 |     throw new Error("boom");
+                   ^
+error: boom
+      at <anonymous> (/home/runner/work/diene.bun-lib/diene.bun-lib/tests/m.test.ts:9:11)
+(fail) math > throws
+
+ 1 pass
+ 1 skip
+ 2 fail
+ 2 expect() calls
+Ran 4 tests across 1 file. [24.00ms]
