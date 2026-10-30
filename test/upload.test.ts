@@ -32,6 +32,7 @@ describe('upload flow (CONTRACT §2)', () => {
     const { r, built } = scenario();
     const m = mock();
     const res = await uploadAll(m.client, 'unit', built, r);
+    const scope = `?flag=unit&job=${built.summary.context.job}`;
     expect(m.calls.map(c => `${c.method} ${c.path}`)).toEqual([
       'GET /api/v1/runs/known-failing?flag=unit',
       'POST /api/v1/runs/finish',
@@ -40,10 +41,34 @@ describe('upload flow (CONTRACT §2)', () => {
       'PUT /api/v1/runs/123/raw/junit.xml',
       'PUT /api/v1/runs/123/raw/lcov.info',
       'PUT /api/v1/runs/123/raw/console.log',
-      'POST /api/v1/sources/check',
-      `PUT /api/v1/sources/${built.summary.sources[0]!.blob}`,
+      `POST /api/v1/sources/check${scope}`,
+      `PUT /api/v1/sources/${built.summary.sources[0]!.blob}${scope}`,
     ]);
     expect(res).toMatchObject({ finished: true, runId: 123, url: 'https://reports.atomi.cloud/o/r/commit/abc', problems: [] });
+  });
+
+  test('sources/check and the blob PUTs carry ?flag=&job=', async () => {
+    const { r, built } = scenario();
+    const m = mock();
+    await uploadAll(m.client, 'a b', built, r);
+    const src = m.calls.filter(c => c.path.startsWith('/api/v1/sources/'));
+    expect(src.length).toBe(2);
+    for (const c of src) expect(c.path).toContain(`?flag=a%20b&job=${built.summary.context.job}`);
+  });
+
+  test('no caps: all raw files and all missing sources are uploaded', async () => {
+    const files: Record<string, string> = {};
+    for (let n = 0; n < 30; n++) files[`src/f${n}.ts`] = `export const n = ${n};\n`;
+    const r = tmpRepo(files);
+    for (let n = 0; n < 9; n++) write(r, `out/${n}/r.xml`, '<testsuite name="s"><testcase classname="a" name="b"/></testsuite>');
+    write(r, 'out/lcov.info', Object.keys(files).map(f => `SF:${f}\nDA:1,1\nend_of_record\n`).join(''));
+    const i = inputs({ language: 'generic', tests: ['out/*/r.xml'], coverage: ['out/lcov.info'] });
+    const built = build({ inputs: i, env: ghEnv(), collected: collect(i, r), outcome, tool: null, diff: null, warnings: [] });
+    const m = mock();
+    const res = await uploadAll(m.client, 'unit', built, r);
+    expect(m.calls.filter(c => c.path.includes('/raw/')).length).toBe(10);
+    expect(m.calls.filter(c => c.method === 'PUT' && c.path.startsWith('/api/v1/sources/')).length).toBe(30);
+    expect(res.problems).toEqual([]);
   });
 
   test('a fresh OIDC token is requested for every call', async () => {
@@ -79,7 +104,7 @@ describe('upload flow (CONTRACT §2)', () => {
 
   test('only the blobs the server says are missing are uploaded', async () => {
     const { r, built } = scenario();
-    const m = mock(c => (c.path === '/api/v1/sources/check' ? { status: 200, body: { missing: [] } } : undefined));
+    const m = mock(c => (c.path.startsWith('/api/v1/sources/check') ? { status: 200, body: { missing: [] } } : undefined));
     await uploadAll(m.client, 'unit', built, r);
     expect(m.calls.some(c => c.method === 'PUT' && c.path.startsWith('/api/v1/sources/'))).toBe(false);
   });
@@ -134,7 +159,7 @@ describe('upload flow (CONTRACT §2)', () => {
     const res = await uploadAll(m.client, 'unit', built, r);
     expect(res.problems.length).toBe(1);
     expect(m.calls.filter(c => c.path.includes('/raw/')).length).toBe(4);
-    expect(m.calls.some(c => c.path === '/api/v1/sources/check')).toBe(false);
+    expect(m.calls.some(c => c.path.startsWith('/api/v1/sources/check'))).toBe(false);
   });
 });
 

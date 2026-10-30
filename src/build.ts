@@ -28,9 +28,6 @@ export const LIMITS = {
   maxStack: 16 * 1024,
   maxSourceBytes: 1024 * 1024,
   maxSources: 20_000,
-  /** The Worker allows 60 writes per (repo, run, attempt) shared by all jobs, so keep each job small. */
-  maxRaw: 6,
-  maxSourcePuts: 20,
 };
 
 export function totalsOf(cases: TestCase[]): TestTotals {
@@ -155,8 +152,7 @@ export function build(ctx: BuildCtx): Built {
 
   // raw files (budgeted)
   const rawAll = rawNames(c.files).filter(r => r.file.bytes <= LIMITS.maxUploadBytes);
-  const raw: RawUpload[] = rawAll.slice(0, LIMITS.maxRaw).map(r => ({ name: r.name, kind: r.file.kind, bytes: r.file.bytes, abs: r.file.abs }));
-  if (rawAll.length > raw.length) warnings.push(`raw files: ${rawAll.length - raw.length} not uploaded (limit ${LIMITS.maxRaw} per job)`);
+  const raw: RawUpload[] = rawAll.map(r => ({ name: r.name, kind: r.file.kind, bytes: r.file.bytes, abs: r.file.abs }));
 
   const summary: SummaryDoc = {
     schema: 'diene-summary/v1',

@@ -68,6 +68,6 @@ function defaults(c: Call): { status: number; body?: unknown } {
   if (c.path.startsWith('/api/v1/runs/known-failing')) return { status: 200, body: { ids: [] } };
   if (c.path === '/api/v1/runs/finish')
     return { status: 200, body: { runId: 123, url: 'https://reports.atomi.cloud/o/r/commit/abc', missingReport: true } };
-  if (c.path === '/api/v1/sources/check') return { status: 200, body: { missing: c.json.blobs } };
+  if (c.path.startsWith('/api/v1/sources/check')) return { status: 200, body: { missing: c.json.blobs } };
   return { status: 200, body: {} };
 }

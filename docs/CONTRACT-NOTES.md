@@ -50,12 +50,13 @@ action implements. `CONTRACT.md` is unchanged.
 
 ## Upload
 
-14. **Rate limit vs chunking.** The Worker allows 60 writes per
-    `(repository_id, run_id, run_attempt)`, shared across all jobs of a run.
-    Per job this action sends at most 6 raw files and 20 source blobs, and when
-    any call still returns 429 after its retries it skips the remaining
-    optional uploads (raw, sources). `finish`, `report` and `cov/n` are always
-    attempted first.
+14. **Rate limit.** The Worker allows 2000 writes per test job
+    (`repository_id`, `run_id`, `run_attempt`, `flag`, `job`), so there is no
+    client-side cap: every raw file and every missing source blob is uploaded.
+    `/sources/check` and `PUT /sources/:blob` carry `?flag=<flag>&job=<job>`.
+    If any optional call still returns 429 after its retries, the remaining
+    optional uploads (raw, sources) are skipped with a warning. `finish`,
+    `report` and `cov/n` are always attempted first.
 15. **`finish` is the only fatal step.** If it fails the action falls back to the
     artifact. Failures of report / cov / raw / sources are warnings.
 16. **Fresh OIDC token per HTTP attempt**, including retries, so a long backoff

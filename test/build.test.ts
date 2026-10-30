@@ -193,7 +193,7 @@ describe('caps', () => {
     fitSummary(summary);
     expect(JSON.stringify(summary)).toBe(before);
   });
-  test('raw: at most 6 files, names match the server pattern and are unique', () => {
+  test('raw: every file is listed (no cap), names match the server pattern and are unique', () => {
     const files = Array.from({ length: 9 }, (_, n) => ({ abs: `/x/${n}/junit.xml`, rel: `d${n}/junit.xml`, kind: 'junit' as const, bytes: 1 }));
     const names = rawNames(files).map(x => x.name);
     expect(new Set(names).size).toBe(9);
@@ -203,9 +203,9 @@ describe('caps', () => {
     for (let n = 0; n < 9; n++) write(r, `out/${n}/r.xml`, '<testsuite name="s"><testcase classname="a" name="b"/></testsuite>');
     const i = inputs({ language: 'generic', tests: ['out/*/r.xml'] });
     const b = build({ inputs: i, env: ghEnv(), collected: collect(i, r), outcome, tool: null, diff: null, warnings: [] });
-    expect(b.raw.length).toBe(LIMITS.maxRaw);
-    expect(b.summary.raw.length).toBe(LIMITS.maxRaw);
-    expect(b.summary.warnings.join()).toMatch(/raw files: 3 not uploaded/);
+    expect(b.raw.length).toBe(9);
+    expect(b.summary.raw.length).toBe(9);
+    expect(b.summary.warnings.join()).not.toMatch(/raw files/);
   });
   test('sources over 1 MB or untracked are not listed', () => {
     const r = tmpRepo({ 'src/big.ts': 'x'.repeat(LIMITS.maxSourceBytes + 1), 'src/m.ts': 'x\n' });

@@ -1,5 +1,5 @@
 import { Client, HttpError } from './http';
-import { LIMITS, readRaw, type Built } from './build';
+import { readRaw, type Built } from './build';
 import { blobContent } from './git';
 import { gzip, errMsg } from './util';
 
@@ -63,6 +63,7 @@ export async function uploadAll(client: Client, flag: string, built: Built, root
   };
 
   const base = `/api/v1/runs/${runId}`;
+  const scope = `?flag=${encodeURIComponent(flag)}&job=${encodeURIComponent(built.summary.context.job)}`;
   if (built.report) await attempt('report', () => client.request('PUT', `${base}/report`, { gzip: gzip(JSON.stringify(built.report)) }));
   for (let n = 0; n < built.chunks.length; n++) {
     await attempt(`cov/${n}`, () => client.request('PUT', `${base}/cov/${n}`, { gzip: gzip(JSON.stringify(built.chunks[n])) }));
@@ -75,16 +76,15 @@ export async function uploadAll(client: Client, flag: string, built: Built, root
     await attempt(
       'sources/check',
       async () => {
-        const res = await client.request<{ missing?: string[] }>('POST', '/api/v1/sources/check', { json: { blobs: [...built.blobs.keys()] } });
+        const res = await client.request<{ missing?: string[] }>('POST', `/api/v1/sources/check${scope}`, { json: { blobs: [...built.blobs.keys()] } });
         missing = (res.missing ?? []).filter(b => built.blobs.has(b));
       },
       true,
     );
-    if (missing.length > LIMITS.maxSourcePuts) problems.push(`sources: ${missing.length - LIMITS.maxSourcePuts} missing blobs not uploaded this run (limit ${LIMITS.maxSourcePuts} per job)`);
-    for (const blob of missing.slice(0, LIMITS.maxSourcePuts)) {
+    for (const blob of missing) {
       await attempt(
         `sources/${blob.slice(0, 8)}`,
-        () => client.request('PUT', `/api/v1/sources/${blob}`, { gzip: gzip(blobContent(rootDir, blob)) }),
+        () => client.request('PUT', `/api/v1/sources/${blob}${scope}`, { gzip: gzip(blobContent(rootDir, blob)) }),
         true,
       );
     }
