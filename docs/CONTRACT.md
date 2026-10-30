@@ -9,7 +9,7 @@ same change, or not at all. Background and reasons: `DESIGN.md` in this folder (
 
 | Item | Value |
 |---|---|
-| Hostname | `https://reports.atomi.dev` (Worker custom domain). Also reachable at `https://diene-reports.kirinnee.workers.dev` |
+| Hostname | `https://reports.atomi.cloud` (Worker custom domain; atomi.dev is in another Cloudflare account). Also reachable at `https://diene-reports.kirinnee.workers.dev` |
 | Plan | Workers Paid (already on the account) |
 | Viewer access | Cloudflare Access on the whole host, reusing the account's existing reusable policy `primordial-ernestOnly`. Bypass for `/api/v1/*` and `/badge/*` |
 | Rollout | shadow next to Codecov for 1 week, then remove Codecov |
@@ -74,7 +74,7 @@ Run identity key = (`repository_id`, `run_id`, `run_attempt`, `flag`, `job`) —
 
 Body = a `diene-summary/v1` document (§3), max **2 MB**. → `200`:
 ```jsonc
-{ "runId": 123, "url": "https://reports.atomi.dev/<owner>/<repo>/commit/<sha>",
+{ "runId": 123, "url": "https://reports.atomi.cloud/<owner>/<repo>/commit/<sha>",
   "missingReport": true }
 ```
 Creates the run if `start` never arrived (orphan; `started_at = null`). A `finish` after the run was marked `lost`
