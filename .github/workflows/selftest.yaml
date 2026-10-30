@@ -1,0 +1,206 @@
+name: selftest
+
+# Runs the action on itself, one small job per language. Each job fakes a test
+# step by copying fixtures into the default paths. The bun job fails its fake
+# step on purpose (continue-on-error keeps the workflow green) so a tests_failed
+# run is produced. Checkout comes first only because `uses: ./` needs the repo
+# on disk; real call sites run `start` before checkout. Uploads warn and fall
+# back to an artifact until the Worker is live; they never fail the job.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  bun:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      - uses: ./
+        with:
+          mode: start
+          flag: bun
+          language: bun
+          endpoint: https://reports.atomi.cloud
+      - name: fake test step (fails on purpose)
+        id: test
+        run: |
+          mkdir -p reports/bun coverage/bun
+          cp fixtures/bun/junit.xml reports/bun/junit.xml
+          cp fixtures/bun/console.log reports/bun/console.log
+          cp fixtures/bun/lcov.info coverage/bun/lcov.info
+          echo "intentional failure: this job exists to produce a tests_failed run"
+          exit 1
+        continue-on-error: true
+      - uses: ./
+        if: always()
+        continue-on-error: true
+        with:
+          mode: finish
+          flag: bun
+          language: bun
+          test-outcome: ${{ steps.test.outcome }}
+          job-status: ${{ job.status }}
+          endpoint: https://reports.atomi.cloud
+
+  go:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      - uses: ./
+        with:
+          mode: start
+          flag: go
+          language: go
+          endpoint: https://reports.atomi.cloud
+      - name: fake test step
+        id: test
+        run: |
+          mkdir -p reports/go coverage
+          cp fixtures/selftest/go/junit.xml reports/go/junit.xml
+          cp fixtures/selftest/go/go.out coverage/go.out
+          cp fixtures/selftest/go/go.mod go.mod
+      - uses: ./
+        if: always()
+        continue-on-error: true
+        with:
+          mode: finish
+          flag: go
+          language: go
+          test-outcome: ${{ steps.test.outcome }}
+          job-status: ${{ job.status }}
+          endpoint: https://reports.atomi.cloud
+
+  dotnet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      - uses: ./
+        with:
+          mode: start
+          flag: dotnet
+          language: dotnet
+          endpoint: https://reports.atomi.cloud
+      - name: fake test step
+        id: test
+        run: |
+          mkdir -p TestResults/dotnet/run
+          cp fixtures/selftest/dotnet/pass.trx TestResults/dotnet/run/pass.trx
+          cp fixtures/selftest/dotnet/coverage.cobertura.xml TestResults/dotnet/run/coverage.cobertura.xml
+      - uses: ./
+        if: always()
+        continue-on-error: true
+        with:
+          mode: finish
+          flag: dotnet
+          language: dotnet
+          test-outcome: ${{ steps.test.outcome }}
+          job-status: ${{ job.status }}
+          endpoint: https://reports.atomi.cloud
+
+  dart:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      - uses: ./
+        with:
+          mode: start
+          flag: dart
+          language: dart
+          endpoint: https://reports.atomi.cloud
+      - name: fake test step
+        id: test
+        run: |
+          mkdir -p reports/dart coverage/dart
+          cp fixtures/selftest/dart/test.json reports/dart/test.json
+          cp fixtures/selftest/dart/lcov.info coverage/dart/lcov.info
+      - uses: ./
+        if: always()
+        continue-on-error: true
+        with:
+          mode: finish
+          flag: dart
+          language: dart
+          test-outcome: ${{ steps.test.outcome }}
+          job-status: ${{ job.status }}
+          endpoint: https://reports.atomi.cloud
+
+  flutter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      - uses: ./
+        with:
+          mode: start
+          flag: flutter
+          language: flutter
+          endpoint: https://reports.atomi.cloud
+      - name: fake test step
+        id: test
+        run: |
+          mkdir -p reports/flutter coverage
+          cp fixtures/selftest/flutter/test.json reports/flutter/test.json
+          cp fixtures/selftest/flutter/lcov.info coverage/lcov.info
+      - uses: ./
+        if: always()
+        continue-on-error: true
+        with:
+          mode: finish
+          flag: flutter
+          language: flutter
+          test-outcome: ${{ steps.test.outcome }}
+          job-status: ${{ job.status }}
+          endpoint: https://reports.atomi.cloud
+
+  generic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      - uses: ./
+        with:
+          mode: start
+          flag: generic
+          language: generic
+          endpoint: https://reports.atomi.cloud
+      - name: fake test step
+        id: test
+        run: |
+          mkdir -p out
+          cp fixtures/selftest/generic/junit.xml out/junit.xml
+          cp fixtures/selftest/generic/lcov.info out/lcov.info
+      - uses: ./
+        if: always()
+        continue-on-error: true
+        with:
+          mode: finish
+          flag: generic
+          language: generic
+          tests: out/junit.xml
+          coverage: out/lcov.info
+          test-outcome: ${{ steps.test.outcome }}
+          job-status: ${{ job.status }}
+          endpoint: https://reports.atomi.cloud

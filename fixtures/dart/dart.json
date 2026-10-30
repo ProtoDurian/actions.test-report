@@ -4,16 +4,16 @@
 {"count":1,"time":7,"type":"allSuites"}
 {"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1105}
 {"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":1107}
-{"group":{"id":3,"suiteID":0,"parentID":2,"name":"math","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":4,"column":3,"url":"file://<scratch>/spike-dart/test/m_test.dart"},"type":"group","time":1107}
-{"test":{"id":4,"name":"math adds","suiteID":0,"groupIDs":[2,3],"metadata":{"skip":false,"skipReason":null},"line":5,"column":5,"url":"file://<scratch>/spike-dart/test/m_test.dart"},"type":"testStart","time":1108}
+{"group":{"id":3,"suiteID":0,"parentID":2,"name":"math","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":4,"column":3,"url":"file:///tmp/scratch/spike-dart/test/m_test.dart"},"type":"group","time":1107}
+{"test":{"id":4,"name":"math adds","suiteID":0,"groupIDs":[2,3],"metadata":{"skip":false,"skipReason":null},"line":5,"column":5,"url":"file:///tmp/scratch/spike-dart/test/m_test.dart"},"type":"testStart","time":1108}
 {"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1125}
-{"test":{"id":5,"name":"math fails","suiteID":0,"groupIDs":[2,3],"metadata":{"skip":false,"skipReason":null},"line":6,"column":5,"url":"file://<scratch>/spike-dart/test/m_test.dart"},"type":"testStart","time":1125}
+{"test":{"id":5,"name":"math fails","suiteID":0,"groupIDs":[2,3],"metadata":{"skip":false,"skipReason":null},"line":6,"column":5,"url":"file:///tmp/scratch/spike-dart/test/m_test.dart"},"type":"testStart","time":1125}
 {"testID":5,"error":"Expected: <4>\n  Actual: <3>\n","stackTrace":"package:matcher        expect\ntest/m_test.dart 6:25  main.<fn>.<fn>\n","isFailure":true,"type":"error","time":1136}
 {"testID":5,"result":"failure","skipped":false,"hidden":false,"type":"testDone","time":1136}
-{"test":{"id":6,"name":"math skipped","suiteID":0,"groupIDs":[2,3],"metadata":{"skip":true,"skipReason":"later"},"line":7,"column":5,"url":"file://<scratch>/spike-dart/test/m_test.dart"},"type":"testStart","time":1137}
+{"test":{"id":6,"name":"math skipped","suiteID":0,"groupIDs":[2,3],"metadata":{"skip":true,"skipReason":"later"},"line":7,"column":5,"url":"file:///tmp/scratch/spike-dart/test/m_test.dart"},"type":"testStart","time":1137}
 {"testID":6,"messageType":"skip","message":"Skip: later","type":"print","time":1137}
 {"testID":6,"result":"success","skipped":true,"hidden":false,"type":"testDone","time":1137}
-{"test":{"id":7,"name":"math throws","suiteID":0,"groupIDs":[2,3],"metadata":{"skip":false,"skipReason":null},"line":8,"column":5,"url":"file://<scratch>/spike-dart/test/m_test.dart"},"type":"testStart","time":1138}
+{"test":{"id":7,"name":"math throws","suiteID":0,"groupIDs":[2,3],"metadata":{"skip":false,"skipReason":null},"line":8,"column":5,"url":"file:///tmp/scratch/spike-dart/test/m_test.dart"},"type":"testStart","time":1138}
 {"testID":7,"error":"Bad state: boom","stackTrace":"test/m_test.dart 8:26  main.<fn>.<fn>\n","isFailure":false,"type":"error","time":1140}
 {"testID":7,"result":"error","skipped":false,"hidden":false,"type":"testDone","time":1140}
 {"success":false,"type":"done","time":2188}

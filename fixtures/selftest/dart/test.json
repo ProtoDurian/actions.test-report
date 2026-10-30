@@ -1,0 +1,6 @@
+{"protocolVersion":"0.1.1","runnerVersion":"1.33.0","pid":1,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"test/m_test.dart"},"type":"suite","time":0}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":1}
+{"test":{"id":3,"name":"adds","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":5,"column":3,"url":null},"type":"testStart","time":2}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5}
+{"success":true,"type":"done","time":6}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="1b4bf724-5d4f-4642-ba19-b7ac97d59a64" name="selftest" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Results>
+    <UnitTestResult executionId="d15ceaf9-8bbf-48aa-be99-6cdbdeca3722" testId="b68f1349-6653-a241-29da-139f52b3aeb7" testName="Tests.UnitTest1.Adds" duration="00:00:00.0100000" outcome="Passed" />
+    <UnitTestResult executionId="d15ceaf9-8bbf-48aa-be99-6cdbdeca3723" testId="b68f1349-6653-a241-29da-139f52b3aeb8" testName="Tests.UnitTest1.Subs" duration="00:00:00.0100000" outcome="Passed" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Tests.UnitTest1.Adds" id="b68f1349-6653-a241-29da-139f52b3aeb7"><TestMethod className="Tests.UnitTest1" name="Adds" /></UnitTest>
+    <UnitTest name="Tests.UnitTest1.Subs" id="b68f1349-6653-a241-29da-139f52b3aeb8"><TestMethod className="Tests.UnitTest1" name="Subs" /></UnitTest>
+  </TestDefinitions>
+</TestRun>
