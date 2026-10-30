@@ -17,7 +17,7 @@
       <Output>
         <ErrorInfo>
           <Message>System.InvalidOperationException : boom</Message>
-          <StackTrace>   at Tests.UnitTest1.Throws() in <scratch>/spike-dotnet/Tests/UnitTest1.cs:line 6
+          <StackTrace>   at Tests.UnitTest1.Throws() in /tmp/scratch/spike-dotnet/Tests/UnitTest1.cs:line 6
    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
         </ErrorInfo>
@@ -29,7 +29,7 @@
           <Message>Assert.Equal() Failure: Values differ
 Expected: 4
 Actual:   3</Message>
-          <StackTrace>   at Tests.UnitTest1.Fails() in <scratch>/spike-dotnet/Tests/UnitTest1.cs:line 4
+          <StackTrace>   at Tests.UnitTest1.Fails() in /tmp/scratch/spike-dotnet/Tests/UnitTest1.cs:line 4
    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
         </ErrorInfo>
@@ -37,21 +37,21 @@ Actual:   3</Message>
     </UnitTestResult>
   </Results>
   <TestDefinitions>
-    <UnitTest name="Tests.UnitTest1.Adds" storage="<scratch>/spike-dotnet/tests/bin/release/net8.0/tests.dll" id="0abc47e3-0228-7a2d-0bc5-4ea07ded3988">
+    <UnitTest name="Tests.UnitTest1.Adds" storage="/tmp/scratch/spike-dotnet/tests/bin/release/net8.0/tests.dll" id="0abc47e3-0228-7a2d-0bc5-4ea07ded3988">
       <Execution id="1de0650e-7578-48d4-ae02-db8eb882493a" />
-      <TestMethod codeBase="<scratch>/spike-dotnet/Tests/bin/Release/net8.0/Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="Tests.UnitTest1" name="Adds" />
+      <TestMethod codeBase="/tmp/scratch/spike-dotnet/Tests/bin/Release/net8.0/Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="Tests.UnitTest1" name="Adds" />
     </UnitTest>
-    <UnitTest name="Tests.UnitTest1.Skipped" storage="<scratch>/spike-dotnet/tests/bin/release/net8.0/tests.dll" id="b68f1349-6653-a241-29da-139f52b3aeb7">
+    <UnitTest name="Tests.UnitTest1.Skipped" storage="/tmp/scratch/spike-dotnet/tests/bin/release/net8.0/tests.dll" id="b68f1349-6653-a241-29da-139f52b3aeb7">
       <Execution id="d15ceaf9-8bbf-48aa-be99-6cdbdeca3722" />
-      <TestMethod codeBase="<scratch>/spike-dotnet/Tests/bin/Release/net8.0/Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="Tests.UnitTest1" name="Skipped" />
+      <TestMethod codeBase="/tmp/scratch/spike-dotnet/Tests/bin/Release/net8.0/Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="Tests.UnitTest1" name="Skipped" />
     </UnitTest>
-    <UnitTest name="Tests.UnitTest1.Throws" storage="<scratch>/spike-dotnet/tests/bin/release/net8.0/tests.dll" id="7a8eae90-2862-b881-2c05-ff8f2043f474">
+    <UnitTest name="Tests.UnitTest1.Throws" storage="/tmp/scratch/spike-dotnet/tests/bin/release/net8.0/tests.dll" id="7a8eae90-2862-b881-2c05-ff8f2043f474">
       <Execution id="91e5386e-cfc6-46bc-9dcb-4314504f2c3d" />
-      <TestMethod codeBase="<scratch>/spike-dotnet/Tests/bin/Release/net8.0/Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="Tests.UnitTest1" name="Throws" />
+      <TestMethod codeBase="/tmp/scratch/spike-dotnet/Tests/bin/Release/net8.0/Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="Tests.UnitTest1" name="Throws" />
     </UnitTest>
-    <UnitTest name="Tests.UnitTest1.Fails" storage="<scratch>/spike-dotnet/tests/bin/release/net8.0/tests.dll" id="79b8b131-d3d6-a9b5-75b7-c0b94bf7b0a0">
+    <UnitTest name="Tests.UnitTest1.Fails" storage="/tmp/scratch/spike-dotnet/tests/bin/release/net8.0/tests.dll" id="79b8b131-d3d6-a9b5-75b7-c0b94bf7b0a0">
       <Execution id="411ee37b-2603-4a32-bfd1-e91bbeb3b92e" />
-      <TestMethod codeBase="<scratch>/spike-dotnet/Tests/bin/Release/net8.0/Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="Tests.UnitTest1" name="Fails" />
+      <TestMethod codeBase="/tmp/scratch/spike-dotnet/Tests/bin/Release/net8.0/Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="Tests.UnitTest1" name="Fails" />
     </UnitTest>
   </TestDefinitions>
   <TestEntries>
@@ -75,13 +75,13 @@ Actual:   3</Message>
 [xUnit.net 00:00:00.16]       Expected: 4
 [xUnit.net 00:00:00.16]       Actual:   3
 [xUnit.net 00:00:00.16]       Stack Trace:
-[xUnit.net 00:00:00.16]         <scratch>/spike-dotnet/Tests/UnitTest1.cs(4,0): at Tests.UnitTest1.Fails()
+[xUnit.net 00:00:00.16]         /tmp/scratch/spike-dotnet/Tests/UnitTest1.cs(4,0): at Tests.UnitTest1.Fails()
 [xUnit.net 00:00:00.16]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
 [xUnit.net 00:00:00.16]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
 [xUnit.net 00:00:00.16]       later
 [xUnit.net 00:00:00.16]       System.InvalidOperationException : boom
 [xUnit.net 00:00:00.16]       Stack Trace:
-[xUnit.net 00:00:00.16]         <scratch>/spike-dotnet/Tests/UnitTest1.cs(6,0): at Tests.UnitTest1.Throws()
+[xUnit.net 00:00:00.16]         /tmp/scratch/spike-dotnet/Tests/UnitTest1.cs(6,0): at Tests.UnitTest1.Throws()
 [xUnit.net 00:00:00.16]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
 [xUnit.net 00:00:00.16]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
 [xUnit.net 00:00:00.16]   Finished:    Tests
