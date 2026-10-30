@@ -46,6 +46,8 @@ export interface RawCase {
 export interface ParsedTests {
   cases: RawCase[];
   warnings: string[];
+  /** why the run could not finish (load/compile failure, crashed test host); shown as outcome notes */
+  crashReasons?: string[];
 }
 
 export interface FileCoverage {
@@ -88,7 +90,8 @@ export interface Inputs {
   workingDirectory: string;
   testOutcome: string;
   jobStatus: string;
-  timeoutMinutes: number;
+  /** null → not set by the caller (finish falls back to the state file, then 30) */
+  timeoutMinutes: number | null;
   endpoint: string;
 }
 

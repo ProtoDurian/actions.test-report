@@ -1,7 +1,10 @@
 import { Client, HttpError } from './http';
-import { readRaw, type Built } from './build';
+import { readRaw, refit, type Built } from './build';
 import { blobContent } from './git';
 import { gzip, errMsg } from './util';
+
+export const UPLOAD_BUDGET_MS = 4 * 60_000;
+export const SOURCE_CONCURRENCY = 6;
 
 export interface UploadResult {
   runId: number | null;
@@ -35,10 +38,13 @@ export async function startRun(client: Client, body: unknown): Promise<void> {
  * CONTRACT §2: known-failing → finish → report → cov/n → raw/<name> → sources/check → sources/<blob>.
  * Only `finish` is fatal. Everything after it is best effort; a rate limit (429 after retries) stops the optional uploads.
  */
-export async function uploadAll(client: Client, flag: string, built: Built, rootDir: string): Promise<UploadResult> {
+export async function uploadAll(client: Client, flag: string, built: Built, rootDir: string, budgetMs: number = UPLOAD_BUDGET_MS): Promise<UploadResult> {
   const problems: string[] = [];
+  const now = client.deps.now ?? Date.now;
+  const startedAt = now();
   const recovered = await fetchRecovered(client, flag, built, problems);
   if (built.summary.tests) built.summary.tests.recovered = recovered;
+  refit(built);
 
   let fin: { runId?: number; url?: string; missingReport?: boolean };
   try {
@@ -52,8 +58,14 @@ export async function uploadAll(client: Client, flag: string, built: Built, root
   if (built.overCap) return { runId, url, problems, finished: true };
 
   let limited = false;
+  let outOfTime = false;
   const attempt = async (what: string, fn: () => Promise<unknown>, optional = false): Promise<void> => {
-    if (optional && limited) return;
+    if (outOfTime || (optional && limited)) return;
+    if (now() - startedAt > budgetMs) {
+      if (!outOfTime) problems.push(`upload budget of ${Math.round(budgetMs / 1000)}s used up; the remaining uploads (starting with ${what}) were skipped`);
+      outOfTime = true;
+      return;
+    }
     try {
       await fn();
     } catch (e) {
@@ -81,13 +93,18 @@ export async function uploadAll(client: Client, flag: string, built: Built, root
       },
       true,
     );
-    for (const blob of missing) {
-      await attempt(
-        `sources/${blob.slice(0, 8)}`,
-        () => client.request('PUT', `/api/v1/sources/${blob}${scope}`, { gzip: gzip(blobContent(rootDir, blob)) }),
-        true,
-      );
-    }
+    let next = 0;
+    const worker = async (): Promise<void> => {
+      while (next < missing.length) {
+        const blob = missing[next++]!;
+        await attempt(
+          `sources/${blob.slice(0, 8)}`,
+          () => client.request('PUT', `/api/v1/sources/${blob}${scope}`, { gzip: gzip(blobContent(rootDir, blob)) }),
+          true,
+        );
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(SOURCE_CONCURRENCY, missing.length) }, worker));
   }
   return { runId, url, problems, finished: true };
 }

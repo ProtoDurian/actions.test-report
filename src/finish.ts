@@ -40,7 +40,20 @@ export function readStartedAt(path: string): string | null {
   }
 }
 
-export async function runFinish(inputs: Inputs, env: GhEnv, deps: FinishDeps): Promise<FinishResult> {
+export function readState(path: string): { startedAt: string | null; timeoutMinutes: number | null } {
+  try {
+    const v = JSON.parse(readFileSync(path, 'utf8'));
+    const tm = Number(v?.timeoutMinutes);
+    return { startedAt: typeof v?.startedAt === 'string' && !Number.isNaN(Date.parse(v.startedAt)) ? v.startedAt : null, timeoutMinutes: Number.isFinite(tm) && tm > 0 ? tm : null };
+  } catch {
+    return { startedAt: null, timeoutMinutes: null };
+  }
+}
+
+export async function runFinish(callerInputs: Inputs, env: GhEnv, deps: FinishDeps): Promise<FinishResult> {
+  const state = readState(stateFilePath(env.runnerTemp, callerInputs.flag));
+  // the timeout is given on `start` only, so finish falls back to what start saved
+  const inputs: Inputs = { ...callerInputs, timeoutMinutes: callerInputs.timeoutMinutes ?? state.timeoutMinutes ?? 30 };
   const warn = deps.warn ?? (() => {});
   const now = (deps.now ?? (() => new Date()))();
   const c = collect(inputs, deps.cwd);
@@ -57,9 +70,9 @@ export async function runFinish(inputs: Inputs, env: GhEnv, deps: FinishDeps): P
     gateMarker: c.gateMarker,
     inactiveMarker: c.inactiveMarker,
     consoleGateLine: c.consoleText ? hasGateLine(c.consoleText) : false,
-    startedAt: readStartedAt(stateFilePath(env.runnerTemp, inputs.flag)),
+    startedAt: state.startedAt,
     finishedAt: now.toISOString(),
-    timeoutMinutes: inputs.timeoutMinutes,
+    timeoutMinutes: inputs.timeoutMinutes!
   });
   const outcome = {
     testStep: inputs.testOutcome || null,
@@ -67,7 +80,7 @@ export async function runFinish(inputs: Inputs, env: GhEnv, deps: FinishDeps): P
     class: cl.class,
     subReason: cl.subReason,
     jobFailedAfterTests: cl.jobFailedAfterTests,
-    startedAt: readStartedAt(stateFilePath(env.runnerTemp, inputs.flag)),
+    startedAt: state.startedAt,
     finishedAt: now.toISOString(),
     notes: [...c.notes, ...cl.notes],
   };

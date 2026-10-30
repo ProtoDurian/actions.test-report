@@ -176,6 +176,7 @@ export function collect(inputs: Inputs, cwd: string = process.cwd()): Collected 
             : parseDartJson(text);
       raw.push(...parsed.cases);
       for (const w of parsed.warnings) problems.push(`${f.rel}: ${w}`);
+      for (const r of parsed.crashReasons ?? []) notes.push(`${f.rel}: ${r}`);
     } catch (e) {
       problems.push(`cannot parse ${f.rel} as ${f.kind}: ${errMsg(e)}`);
     }

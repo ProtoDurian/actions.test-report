@@ -74,5 +74,18 @@ export function parseTrx(text: string): ParsedTests {
       stack: failed ? stack || null : null,
     });
   }
-  return { cases, warnings: [] };
+  const crashReasons: string[] = [];
+  const summary: XNode = run.ResultSummary ?? {};
+  const texts = [
+    ...asArray(summary.RunInfos?.RunInfo)
+      .filter(r => r['@_outcome'] === 'Error')
+      .map(r => textOf(r.Text)),
+    ...(summary['@_outcome'] === 'Aborted' ? [textOf(summary.Output?.StdErr)] : []),
+  ];
+  for (const t of texts) {
+    const one = t.replace(/\s+/g, ' ').trim();
+    // plain test failures are listed as RunInfo errors too ('[FAIL]'); only keep run-level problems
+    if (one && !/\[(FAIL|SKIP|PASS)\]/.test(one)) crashReasons.push(one.slice(0, 300));
+  }
+  return { cases, warnings: [], crashReasons };
 }

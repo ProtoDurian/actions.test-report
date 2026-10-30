@@ -3,6 +3,7 @@ import { errMsg, sleep } from './util';
 
 export const AUDIENCE = 'diene-reports';
 export const BACKOFF_MS = [1000, 3000, 9000];
+export const ATTEMPT_TIMEOUT_MS = 30_000;
 
 export class HttpError extends Error {
   constructor(
@@ -16,10 +17,13 @@ export class HttpError extends Error {
 }
 
 export interface HttpDeps {
-  fetch: (url: string, init: { method: string; headers: Record<string, string>; body?: string | Uint8Array }) => Promise<{ status: number; text(): Promise<string> }>;
+  fetch: (url: string, init: { method: string; headers: Record<string, string>; body?: string | Uint8Array; signal?: AbortSignal }) => Promise<{ status: number; text(): Promise<string> }>;
   getIDToken: (audience: string) => Promise<string>;
   sleep: (ms: number) => Promise<void>;
   backoffMs: number[];
+  /** per-attempt timeout (headers + body) */
+  attemptTimeoutMs?: number;
+  now?: () => number;
 }
 
 export const realDeps = (): HttpDeps => ({
@@ -27,6 +31,8 @@ export const realDeps = (): HttpDeps => ({
   getIDToken: aud => core.getIDToken(aud),
   sleep,
   backoffMs: BACKOFF_MS,
+  attemptTimeoutMs: ATTEMPT_TIMEOUT_MS,
+  now: Date.now,
 });
 
 export type Body = { json: unknown } | { gzip: Uint8Array } | undefined;
@@ -55,7 +61,8 @@ export class Client {
           headers['content-type'] = 'application/gzip';
           payload = body.gzip;
         }
-        const res = await this.deps.fetch(this.endpoint + path, { method, headers, body: payload });
+        const signal = AbortSignal.timeout(this.deps.attemptTimeoutMs ?? ATTEMPT_TIMEOUT_MS);
+        const res = await this.deps.fetch(this.endpoint + path, { method, headers, body: payload, signal });
         const text = await res.text().catch(() => '');
         if (res.status >= 200 && res.status < 300) {
           if (!text) return {} as T;

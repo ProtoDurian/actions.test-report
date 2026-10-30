@@ -40,9 +40,9 @@ inputs:
     required: false
     default: ''
   timeout-minutes:
-    description: The job's timeout. Used to tell a timeout from a cancellation.
+    description: The job's timeout in minutes, used to tell a timeout from a cancellation. Pass it on start; finish reuses it. Defaults to 30.
     required: false
-    default: '30'
+    default: ''
   endpoint:
     description: Base URL of the diene-reports server.
     required: false

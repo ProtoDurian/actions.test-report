@@ -16,10 +16,11 @@ export interface StartResult {
 /** mode: start — remember when the job began, then tell the server so a lost job can be detected. */
 export async function runStart(inputs: Inputs, env: GhEnv, client: Client | null, now: Date = new Date()): Promise<StartResult> {
   const problems: string[] = [];
+  const timeoutMinutes = inputs.timeoutMinutes ?? 30;
   const statePath = stateFilePath(env.runnerTemp, inputs.flag);
   try {
     mkdirSync(dirname(statePath), { recursive: true });
-    writeFileSync(statePath, JSON.stringify({ startedAt: now.toISOString(), timeoutMinutes: inputs.timeoutMinutes }));
+    writeFileSync(statePath, JSON.stringify({ startedAt: now.toISOString(), timeoutMinutes }));
   } catch (e) {
     problems.push(`cannot write state file ${statePath}: ${errMsg(e)}`);
   }
@@ -32,7 +33,7 @@ export async function runStart(inputs: Inputs, env: GhEnv, client: Client | null
         job: env.job,
         language: inputs.language,
         workflow: env.workflow,
-        timeoutMinutes: inputs.timeoutMinutes,
+        timeoutMinutes,
         headSha: env.headSha,
         pr: env.pr,
         baseRef: env.baseRef,

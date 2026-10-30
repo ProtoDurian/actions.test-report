@@ -6,6 +6,11 @@ export type ArtifactUploader = (name: string, files: string[], root: string) => 
 
 export const artifactName = (flag: string): string => `test-report-${flag.replace(/[^A-Za-z0-9._-]/g, '_')}`;
 
+export const uniqueArtifactName = (flag: string, job: string, runAttempt: number): string =>
+  `${artifactName(flag)}-${job.replace(/[^A-Za-z0-9._-]/g, '_')}-${runAttempt}`;
+
+const isConflict = (e: unknown): boolean => /\b409\b|already exists|conflict/i.test(e instanceof Error ? e.message : String(e));
+
 export async function realUploader(name: string, files: string[], root: string): Promise<void> {
   const { DefaultArtifactClient } = await import('@actions/artifact');
   await new DefaultArtifactClient().uploadArtifact(name, files, root, { retentionDays: 14 });
@@ -30,6 +35,14 @@ export async function uploadArtifactFallback(
     writeFileSync(reportPath, JSON.stringify(built.report));
     files.push(reportPath);
   }
-  await upload(name, files, dir);
-  return name;
+  try {
+    await upload(name, files, dir);
+    return name;
+  } catch (e) {
+    // matrix jobs sharing a flag in one run all want test-report-<flag>; the second one gets a 409
+    if (!isConflict(e)) throw e;
+    const alt = uniqueArtifactName(flag, built.summary.context.job, built.summary.context.runAttempt);
+    await upload(alt, files, dir);
+    return alt;
+  }
 }

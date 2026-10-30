@@ -169,7 +169,7 @@ export function build(ctx: BuildCtx): Built {
       flag: inputs.flag,
       language: inputs.language,
       tool: ctx.tool,
-      timeoutMinutes: inputs.timeoutMinutes,
+      timeoutMinutes: inputs.timeoutMinutes ?? 30,
     },
     outcome,
     tests: testTotals && fl ? { totals: testTotals, failures: fl.failures, failuresTruncated: fl.truncated, recovered: [] } : null,
@@ -216,7 +216,7 @@ export function build(ctx: BuildCtx): Built {
         language: inputs.language,
         tool: ctx.tool,
       },
-      outcome: { ...outcome, timeoutMinutes: inputs.timeoutMinutes },
+      outcome: { ...outcome, timeoutMinutes: inputs.timeoutMinutes ?? 30 },
       tests: cases && testTotals ? { totals: testTotals, cases } : null,
       coverage:
         cov && covTotals
@@ -245,48 +245,71 @@ export function build(ctx: BuildCtx): Built {
   }
   if (overCap) {
     summary.sources = [];
+    summary.raw = [];
     blobs.clear();
     chunks = [];
   }
-  fitSummary(summary);
-  if (summary.overCap) {
-    overCap = true;
-    report = null;
-    chunks = [];
-    blobs.clear();
+  const built: Built = { summary, report, chunks, raw: overCap ? [] : raw, blobs, overCap, diff: ctx.diff };
+  refit(built);
+  return built;
+}
+
+/**
+ * Re-check the finish body against its 2 MB cap (also after `tests.recovered` is added).
+ * Dropping the source list also drops the source uploads; only losing per-file coverage sets overCap,
+ * which turns the run into summary-only.
+ */
+export function refit(b: Built): void {
+  const hadSources = b.summary.sources.length > 0;
+  fitSummary(b.summary);
+  if (hadSources && b.summary.sources.length === 0) {
+    b.blobs.clear();
+    if (b.report) b.report.sources = [];
   }
-  return { summary, report, chunks, raw: overCap ? [] : raw, blobs, overCap, diff: ctx.diff };
+  if (b.summary.overCap && !b.overCap) {
+    b.overCap = true;
+    b.report = null;
+    b.chunks = [];
+    b.raw = [];
+    b.blobs.clear();
+    b.summary.raw = [];
+    b.summary.sources = [];
+  }
 }
 
 /** Make sure the finish body stays below 2 MB, dropping the least valuable parts first. */
 export function fitSummary(s: SummaryDoc, max = LIMITS.maxSummaryBytes): void {
   const fits = (): boolean => jsonBytes(s) <= max;
   if (fits()) return;
-  const note = (m: string): void => {
-    s.overCap = true;
+  const note = (m: string, cap = false): void => {
+    if (cap) s.overCap = true;
     s.warnings.push(m);
   };
   if (s.sources.length) {
     s.sources = [];
-    note('over cap: source list dropped from the summary');
+    note('summary too large: source list dropped');
     if (fits()) return;
   }
   if (s.tests) {
     for (const keep of [50, 10, 0]) {
       s.tests.failures = s.tests.failures.slice(0, keep);
       s.tests.failuresTruncated = true;
-      if (fits()) return;
+      if (fits()) {
+        note('summary too large: failure list shortened');
+        return;
+      }
     }
   }
   if (s.patch) {
     for (const f of s.patch.files) f.uncovered = f.uncovered.slice(0, 20);
     if (fits()) return;
     s.patch.files = [];
+    note('summary too large: patch coverage details dropped');
     if (fits()) return;
   }
   if (s.coverage) {
     s.coverage.files = [];
-    note('over cap: per-file coverage dropped from the summary');
+    note('over cap: per-file coverage dropped from the summary; only the summary is uploaded', true);
   }
   s.warnings = s.warnings.slice(0, 20);
 }

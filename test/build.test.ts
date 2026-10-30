@@ -175,7 +175,7 @@ describe('caps', () => {
     expect(b.report).toBeNull();
     expect(b.summary.coverage!.totals.lines).toBe(LIMITS.maxCoverageFiles + 1);
   });
-  test('the summary is trimmed to stay under 2 MB, flagged overCap', () => {
+  test('the summary is trimmed to stay under 2 MB', () => {
     const failures = Array.from({ length: 200 }, (_, n) => ({
       id: String(n).padStart(20, '0'), suite: 's', name: `n${n}`, file: null, line: null, status: 'failed' as const, durationMs: 0, message: 'm'.repeat(4096), stack: null,
     }));
@@ -185,7 +185,8 @@ describe('caps', () => {
     summary.sources = Array.from({ length: 20_000 }, (_, n) => ({ path: 'src/some/long/dir/file' + n + '.ts', blob: 'a'.repeat(40), bytes: 1 }));
     fitSummary(summary);
     expect(Buffer.byteLength(JSON.stringify(summary))).toBeLessThanOrEqual(LIMITS.maxSummaryBytes);
-    expect(summary.overCap).toBe(true);
+    expect(summary.sources).toEqual([]);
+    expect(summary.overCap).toBe(false);
   });
   test('a summary that already fits is left alone', () => {
     const { summary } = make();

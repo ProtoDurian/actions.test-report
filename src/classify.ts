@@ -1,4 +1,5 @@
 import type { OutcomeClass, SubReason } from './types';
+import { stripAnsi } from './util';
 
 export interface ClassifyInput {
   testOutcome: string | null;
@@ -26,7 +27,7 @@ export interface Classified {
 const GRACE_MS = 3 * 60_000;
 
 export const hasGateLine = (consoleText: string): boolean =>
-  consoleText.split('\n').some(l => l.trimStart().startsWith('❌') && /coverage/i.test(l));
+  stripAnsi(consoleText).split('\n').some(l => l.trimStart().startsWith('❌') && /coverage/i.test(l));
 
 /** CONTRACT §5 */
 export function classify(i: ClassifyInput): Classified {

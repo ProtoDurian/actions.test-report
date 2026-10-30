@@ -6,7 +6,8 @@ export function mergeFile(into: FileCoverage, from: FileCoverage): void {
   for (const [n, h] of from.lines) into.lines.set(n, (into.lines.get(n) ?? 0) + h);
   for (const [n, [hit, total]] of from.branches) {
     const cur = into.branches.get(n);
-    into.branches.set(n, cur ? [Math.min(Math.max(cur[1], total), cur[0] + hit), Math.max(cur[1], total)] : [hit, total]);
+    // the same branch may be reported by several files: take the larger hit count (a safe lower bound), never the sum
+    into.branches.set(n, cur ? [Math.max(cur[0], hit), Math.max(cur[1], total)] : [hit, total]);
   }
 }
 

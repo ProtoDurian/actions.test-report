@@ -71,7 +71,7 @@ export function renderSummary(i: RenderInput): string {
     out.push(`### Failed tests (${Math.min(failures.length, MAX_FAILURES)}${s.tests!.totals.failed + s.tests!.totals.errored > MAX_FAILURES ? ` of ${s.tests!.totals.failed + s.tests!.totals.errored}` : ''})`);
     out.push('');
     for (const f of failures.slice(0, MAX_FAILURES)) {
-      const where = f.file ? ` — \`${f.file}${f.line ? `:${f.line}` : ''}\`` : '';
+      const where = f.file ? ` — <code>${escapeHtml(`${f.file}${f.line ? `:${f.line}` : ''}`)}</code>` : '';
       const title = f.suite ? `${f.suite} › ${f.name}` : f.name;
       out.push(`<details><summary><b>${f.status === 'errored' ? 'error' : 'failed'}</b> ${escapeHtml(title)}${where}</summary>`);
       out.push('');
@@ -86,7 +86,7 @@ export function renderSummary(i: RenderInput): string {
   if (notes.length) {
     out.push('<details><summary>Notes</summary>');
     out.push('');
-    for (const n of notes) out.push(`- ${n.replace(/\n/g, ' ')}`);
+    for (const n of notes) out.push(`- ${escapeHtml(n.replace(/\s+/g, ' '))}`);
     out.push('</details>');
     out.push('');
   }

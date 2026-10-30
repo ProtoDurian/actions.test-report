@@ -39,8 +39,8 @@ steps:
 | `working-directory` | `.` | globs are relative to it |
 | `test-outcome` | | `steps.<id>.outcome` of the test step |
 | `job-status` | | `job.status` |
-| `timeout-minutes` | `30` | used to tell `timed_out` from `cancelled` |
-| `endpoint` | `https://reports.atomi.cloud` | server |
+| `timeout-minutes` | _(30)_ | job timeout; pass on `start`, `finish` reuses it. Tells `timed_out` from `cancelled` |
+| `endpoint` | `https://reports.atomi.cloud` | server; must be https (http only for localhost) |
 
 Outputs: `run-url`, `class` (`passed`, `tests_failed`, `errored`, `cancelled`,
 `timed_out`, `inactive`, `no_report`).
