@@ -1,0 +1,22 @@
+{
+  "name": "actions.test-report",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GitHub action: parse test + coverage results and upload them to diene-reports",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "build": "bun build src/index.ts --target=node --format=cjs --minify --outfile=dist/index.js"
+  },
+  "dependencies": {
+    "@actions/artifact": "^6.3.1",
+    "@actions/core": "^3.0.1",
+    "fast-glob": "^3.3.3",
+    "fast-xml-parser": "^5.11.2"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,61 @@
+name: Test report
+description: Parse test and coverage results (Bun, Go, .NET, Dart, Flutter, JUnit) and send them to a diene-reports server. Never fails the job.
+author: ProtoDurian
+branding:
+  icon: check-circle
+  color: green
+inputs:
+  mode:
+    description: '`start` as the first step of the job, `finish` as the last step (with `if: always()`).'
+    required: true
+  flag:
+    description: Label of this test tier, e.g. `unit` or `integration`. Same meaning as a Codecov flag.
+    required: true
+  language:
+    description: One of `bun`, `go`, `dotnet`, `dart`, `flutter`, `generic`. Decides the default file locations.
+    required: false
+    default: generic
+  tests:
+    description: Newline-separated globs of test result files, relative to `working-directory`. Defaults depend on `language`.
+    required: false
+    default: ''
+  coverage:
+    description: Newline-separated globs of coverage files, relative to `working-directory`. Defaults depend on `language`.
+    required: false
+    default: ''
+  console-log:
+    description: Console log of the test run. Bun needs it for failure messages; any language can use it for gate (`❌ ... coverage`) detection.
+    required: false
+    default: ''
+  working-directory:
+    description: Directory that globs are relative to.
+    required: false
+    default: ''
+  test-outcome:
+    description: Pass `${{ steps.<id>.outcome }}` of the step that ran the tests.
+    required: false
+    default: ''
+  job-status:
+    description: Pass `${{ job.status }}`.
+    required: false
+    default: ''
+  timeout-minutes:
+    description: The job's timeout. Used to tell a timeout from a cancellation.
+    required: false
+    default: '30'
+  endpoint:
+    description: Base URL of the diene-reports server.
+    required: false
+    default: https://reports.atomi.cloud
+  comment:
+    description: Reserved, currently ignored.
+    required: false
+    default: ''
+outputs:
+  run-url:
+    description: URL of the run page, empty when nothing was uploaded.
+  class:
+    description: 'Outcome class: passed, tests_failed, errored, cancelled, timed_out, no_report or inactive.'
+runs:
+  using: node24
+  main: dist/index.js
