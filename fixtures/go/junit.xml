@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="2" errors="0" time="0.004882">
+	<testsuite tests="4" failures="2" skipped="1" time="0.005000" name="example.com/spike/calc" timestamp="2026-10-29T15:57:20Z">
+		<properties>
+			<property name="go.version" value="go1.26.8 linux/amd64"></property>
+		</properties>
+		<testcase classname="example.com/spike/calc" name="TestSub" time="0.000000">
+			<failure message="Failed" type="">=== RUN   TestSub&#xA;    calc_test.go:10: Sub(5,2) = 3, want 4&#xA;--- FAIL: TestSub (0.00s)&#xA;</failure>
+		</testcase>
+		<testcase classname="example.com/spike/calc" name="TestPanic" time="0.000000">
+			<failure message="Failed" type="">=== RUN   TestPanic&#xA;--- FAIL: TestPanic (0.00s)&#xA;panic: assignment to entry in nil map [recovered, repanicked]&#xA;&#xA;goroutine 9 [running]:&#xA;testing.tRunner.func1.2({0x5ac920, 0x75f1c0})&#xA;&#x9;/nix/store/iqq9yz2yrcrzsn52h3vkkz72i92h1zds-go-1.26.8/share/go/src/testing/testing.go:1974 +0x232&#xA;testing.tRunner.func1()&#xA;&#x9;/nix/store/iqq9yz2yrcrzsn52h3vkkz72i92h1zds-go-1.26.8/share/go/src/testing/testing.go:1977 +0x349&#xA;panic({0x5ac920?, 0x75f1c0?})&#xA;&#x9;/nix/store/iqq9yz2yrcrzsn52h3vkkz72i92h1zds-go-1.26.8/share/go/src/runtime/panic.go:860 +0x13a&#xA;example.com/spike/calc_test.TestPanic(0x21d66f0e8908?)&#xA;&#x9;<scratch>/spike-go/calc/calc_test.go:12 +0x28&#xA;testing.tRunner(0x21d66f0e8908, 0x5ecfe8)&#xA;&#x9;/nix/store/iqq9yz2yrcrzsn52h3vkkz72i92h1zds-go-1.26.8/share/go/src/testing/testing.go:2036 +0xea&#xA;created by testing.(*T).Run in goroutine 1&#xA;&#x9;/nix/store/iqq9yz2yrcrzsn52h3vkkz72i92h1zds-go-1.26.8/share/go/src/testing/testing.go:2101 +0x4c5&#xA;</failure>
+		</testcase>
+		<testcase classname="example.com/spike/calc" name="TestSkip" time="0.000000">
+			<skipped message="=== RUN   TestSkip&#xA;    calc_test.go:11: later&#xA;--- SKIP: TestSkip (0.00s)&#xA;"></skipped>
+		</testcase>
+		<testcase classname="example.com/spike/calc" name="TestAdd" time="0.000000"></testcase>
+	</testsuite>
+</testsuites>

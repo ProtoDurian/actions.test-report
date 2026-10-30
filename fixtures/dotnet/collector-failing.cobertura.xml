@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<coverage line-rate="1" branch-rate="0.5" version="1.9" timestamp="1793289877" lines-covered="1" lines-valid="1" branches-covered="1" branches-valid="2">
+  <sources>
+    <source>/</source>
+  </sources>
+  <packages>
+    <package name="Lib" line-rate="1" branch-rate="0.5" complexity="3">
+      <classes>
+        <class name="Lib.M" filename="tmp/claude-1000/-home-kirin-Workspace-atomi-diene/cd5d07af-f1fc-45ff-ad3b-6d8db98319b3/scratchpad/spike-dotnet/Lib/Class1.cs" line-rate="1" branch-rate="0.5" complexity="3">
+          <methods>
+            <method name="Add" signature="(System.Int32,System.Int32)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="2" hits="3" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="2" hits="3" branch="False" />
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>

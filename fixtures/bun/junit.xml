@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="bun test" tests="4" assertions="2" failures="2" skipped="1" time="0.024731204">
+  <testsuite name="tests/m.test.ts" file="tests/m.test.ts" tests="4" assertions="2" failures="2" skipped="1" time="0" hostname="ip-172-27-76-90">
+    <testsuite name="math" file="tests/m.test.ts" line="3" tests="4" assertions="2" failures="2" skipped="1" time="0" hostname="ip-172-27-76-90">
+      <testcase name="adds" classname="math" time="0" file="tests/m.test.ts" line="4" assertions="1" />
+      <testcase name="fails" classname="math" time="0" file="tests/m.test.ts" line="5" assertions="1">
+        <failure type="AssertionError" />
+      </testcase>
+      <testcase name="skipped" classname="math" time="0" file="tests/m.test.ts" line="6" assertions="0">
+        <skipped />
+      </testcase>
+      <testcase name="throws" classname="math" time="0" file="tests/m.test.ts" line="7" assertions="0">
+        <failure type="AssertionError" />
+      </testcase>
+    </testsuite>
+  </testsuite>
+</testsuites>

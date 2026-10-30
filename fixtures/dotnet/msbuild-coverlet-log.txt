@@ -1,0 +1,5 @@
+dotnet3.log:  [coverlet] _mapping file name: 'CoverletSourceRootsMapping_Tests'
+dotnet3.log:Passed!  - Failed:     0, Passed:     1, Skipped:     1, Total:     2, Duration: 3 ms - Tests.dll (net8.0)
+dotnet3.log:  [coverlet] 
+dotnet.log:  [coverlet] _mapping file name: 'CoverletSourceRootsMapping_Tests'
+dotnet.log:Failed!  - Failed:     2, Passed:     1, Skipped:     1, Total:     4, Duration: 14 ms - Tests.dll (net8.0)
