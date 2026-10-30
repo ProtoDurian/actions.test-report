@@ -43,7 +43,7 @@ unknown `kid`); `iss == https://token.actions.githubusercontent.com`; `aud == di
 
 Only lane `branch` updates branch history (`branch_head`, `test_stats`, `keep/`). A PR never writes branch history.
 
-Rate limit: max 2000 `/api/v1` writes per run identity key (`repository_id`, `run_id`, `run_attempt`, `flag`, `job`) — i.e. per test job, not per workflow run; `PUT /sources/*` counts. Over → `429`. (Changed 2026-10-30: a per-workflow-run limit would starve multi-job runs.)
+Rate limit: max 2000 `/api/v1` writes per run identity key (`repository_id`, `run_id`, `run_attempt`, `flag`, `job`) — i.e. per test job, not per workflow run; `/sources` calls count too and carry `?flag=<flag>&job=<job>` so the Worker can attribute them. Over → `429`. (Changed 2026-10-30: a per-workflow-run limit would starve multi-job runs.)
 
 ## 2. Endpoints
 
